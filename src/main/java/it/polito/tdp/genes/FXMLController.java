@@ -7,6 +7,7 @@ package it.polito.tdp.genes;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.genes.model.Adiacenza;
 import it.polito.tdp.genes.model.Genes;
 import it.polito.tdp.genes.model.Model;
 import javafx.event.ActionEvent;
@@ -30,7 +31,7 @@ public class FXMLController {
     private Button btnCreaGrafo; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGeni"
-    private ComboBox<?> cmbGeni; // Value injected by FXMLLoader
+    private ComboBox<Genes> cmbGeni; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnGeniAdiacenti"
     private Button btnGeniAdiacenti; // Value injected by FXMLLoader
@@ -46,19 +47,36 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	
+    	txtResult.clear();
+    	model.creaGrafo();
+    	txtResult.appendText("Grafo creato con " + model.nVertici() + " vertici e " + model.nArchi() + " archi");
+    	cmbGeni.getItems().addAll(model.getVertici());
 
     }
 
     @FXML
-    void doGeniAdiacenti(ActionEvent event) {
-
-    	
+    void doGeniAdiacenti(ActionEvent event) {    	
+    	if(cmbGeni.getValue() != null) {
+    		txtResult.appendText("\n\nGeni adiacenti a: " + cmbGeni.getValue().getGeneId() + "\n");
+    		for(Adiacenza a : model.getAdiacenze(cmbGeni.getValue())) {
+    			txtResult.appendText(a.toString());
+    		}
+    	}
+    	else {
+			txtResult.setText("Selezionare un gene");
+		}
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	String n = txtIng.getText();
+    	
+    	try {
+			int num = Integer.parseInt(n);
+			txtResult.appendText(model.getStatistiche(num, cmbGeni.getValue()));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
